@@ -17,14 +17,11 @@ app.add_middleware(
 @app.post("/extract-text/")
 async def extract_text(file: UploadFile = File(...)):
     content = await file.read()
-    text_by_page = []
+    text_by_page = ""
 
     with pdfplumber.open(io.BytesIO(content)) as pdf:
         for i, page in enumerate(pdf.pages):
             text = page.extract_text()
-            text_by_page.append({
-                "page": i + 1,
-                "text": text
-            })
+            text_by_page=text_by_page+text
 
     return {"filename": file.filename, "pages": text_by_page}
